@@ -1,13 +1,23 @@
 from sys import stdin
 from itertools import combinations as combi
 
-def check(A, B):
-    count = 0
-    for i in range(4):
-        if A[i] != B[i]:
-            count += 1
+# 미리 거리를 계산하여 중복 계산 방지
+# -> 실행시간 288ms(60%) 감소
+types = "ISTJ, ISFJ, INFJ, INTJ, ISTP, ISFP, INFP, INTP, ESTP, ESFP, ENFP, ENTP, ESTJ, ESFJ, ENFJ, ENTJ".split(", ")
+mapping_str = {value:index for index, value in enumerate(types)}
+mapping_num = {index:value for index, value in enumerate(types)}
 
-    return count
+distance_table = [[0] * 16 for i in range(16)]
+for i in range(16):
+    for j in range(16):
+        if i == j:
+            continue
+        if not distance_table[i][j]:
+            diff = 0
+            for k in range(4):
+                if mapping_num[i][k] != mapping_num[j][k]:
+                    diff += 1
+            distance_table[i][j] = distance_table[j][i] = diff
 
 input = stdin.readline
 
@@ -21,7 +31,8 @@ for _ in range(TC):
     else:
         distance = 999999
         for A, B, C in combi(students, 3):
-            distance = min(distance, check(A, B) + check(A, C) + check(B, C))
+            a, b, c = mapping_str[A], mapping_str[B], mapping_str[C]
+            distance = min(distance, distance_table[a][b] + distance_table[a][c] + distance_table[b][c])
             if distance == 0:
                 break
         print(distance)
