@@ -52,16 +52,55 @@ def get_score(i : int, j : int) -> list:
 
     return result
 
+def DFS(y, x, depth, value):
+    global result
+    if result > value + max_value * (4 - depth): # 이 조건으로 가지치기 안하면 오히려 2배걸림..
+        return
+    
+    if depth == 4:
+        result = max(result, value)
+        return
+    
+    for next_y, next_x in [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]:
+        if 0 <= next_y < height and 0 <= next_x < width and not Visited[next_y][next_x]:
+            Visited[next_y][next_x] = True
+            DFS(next_y, next_x, depth + 1, value + num_data[next_y][next_x])
+            Visited[next_y][next_x] = False
+
 input = stdin.readline
 
 height, width = map(int, input().split())
 
 num_data = [list(map(int, input().split())) for i in range(height)]
+max_value = result = 0
 
-result = 0
+for i in num_data:
+    max_value = max(max_value, max(i))
 
-for i in range(height): # 세로
+""" for i in range(height): # 세로
     for j in range(width): # 가로
         result = max(result, get_score(i, j))
+"""
+
+Visited = [[False] * width for _ in range(height)]
+
+for i in range(height):
+    for j in range(width):
+        Visited[i][j] = True
+        DFS(i, j, 1, num_data[i][j])
+        Visited[i][j] = False
+
+        if i + 2 < height:
+            type_LT_common_H = sum(num_data[i + value][j] for value in range(3))
+            type_LT_sub_H = [(i + 1, j - 1), (i + 1, j + 1)]
+            for y, x in type_LT_sub_H:
+                if 0 <= x < width:
+                    result = max(result, type_LT_common_H + num_data[y][x])
+        if j + 2 < width:
+            type_LT_common_V = sum(num_data[i][j + value] for value in range(3))
+            type_LT_sub_V = [(i + 1, j + 1), (i - 1, j + 1)]
+            for y, x in type_LT_sub_V:
+                if 0 <= y < height:
+                    result = max(result, type_LT_common_V + num_data[y][x])
 
 print(result)
