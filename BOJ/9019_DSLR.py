@@ -7,32 +7,34 @@ TC = int(input())
 for _ in range(TC):
     current, target = map(int, input().rstrip().split())
     
-    DP = [False] * 10000
+    DP = [-1] * 10000
 
-    Queue = deque([(current, "")])
-    DP[current] = True # "" 인 경우 if문에서 False 취급되므로
+    Queue = deque([current])
+    DP[current] = ""
 
     while Queue:
-        number, string = Queue.popleft()
+        number = Queue.popleft()
+        # pypy3 기준 (number, string) tuple 입력 -> number 단일로 변경시
+        # 8468ms -> 5584ms로 시간이 34% 줄어듦.
         if number == target:
             break
 
         num_D = (number * 2) % 10000
         num_S = number - 1 if number > 0 else 9999
         num_L = (number % 1000) * 10 + number // 1000
-        num_R = (number // 10) + 1000 * number % 10
+        num_R = (number // 10) + 1000 * (number % 10) # 이런... 함수 제거한 다음 옮기면서 괄호를 안 씌웠었다..
 
-        if not DP[num_D]:
-            DP[num_D] = string + "D"
-            Queue.append((num_D, string + "D"))
-        if not DP[num_S]:
-            DP[num_S] = string + "S"
-            Queue.append((num_S, string + "S"))
-        if not DP[num_L]:
-            DP[num_L] = string + "L"
-            Queue.append((num_L, string + "L"))
-        if not DP[num_R]:
-            DP[num_R] = string + "R"
-            Queue.append((num_R, string + "R"))
+        if DP[num_D] == -1:
+            DP[num_D] = DP[number] + "D"
+            Queue.append(num_D)
+        if DP[num_S] == -1:
+            DP[num_S] = DP[number] + "S"
+            Queue.append(num_S)
+        if DP[num_L] == -1:
+            DP[num_L] = DP[number] + "L"
+            Queue.append(num_L)
+        if DP[num_R] == -1:
+            DP[num_R] = DP[number] + "R"
+            Queue.append(num_R)
 
     print(DP[target])
