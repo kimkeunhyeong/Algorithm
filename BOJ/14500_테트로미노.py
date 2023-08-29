@@ -63,6 +63,14 @@ def DFS(y, x, depth, value):
     
     for next_y, next_x in [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]:
         if 0 <= next_y < height and 0 <= next_x < width and not Visited[next_y][next_x]:
+            # 여기서 y, x를 검사하는 이유?
+            # 이게 없으면 L, I, S, ㅁ은 가능한데 T가 불가능
+            # -> 이를 위해 3번을 방문처리할 때 next_y, next_x 대신 2번(y, x) 위치를 추가로 검사해주면
+            # ㄴ or ㅣ의 중간 부분에서 검사를 하게 될 것이므로 T자에 대한 검사가 가능해짐!
+            if depth == 2:
+                Visited[next_y][next_x] = True
+                DFS(y, x, depth + 1, value + num_data[next_y][next_x])
+                Visited[next_y][next_x] = False
             Visited[next_y][next_x] = True
             DFS(next_y, next_x, depth + 1, value + num_data[next_y][next_x])
             Visited[next_y][next_x] = False
@@ -89,18 +97,5 @@ for i in range(height):
         Visited[i][j] = True
         DFS(i, j, 1, num_data[i][j])
         Visited[i][j] = False
-
-        if i + 2 < height:
-            type_LT_common_H = sum(num_data[i + value][j] for value in range(3))
-            type_LT_sub_H = [(i + 1, j - 1), (i + 1, j + 1)]
-            for y, x in type_LT_sub_H:
-                if 0 <= x < width:
-                    result = max(result, type_LT_common_H + num_data[y][x])
-        if j + 2 < width:
-            type_LT_common_V = sum(num_data[i][j + value] for value in range(3))
-            type_LT_sub_V = [(i + 1, j + 1), (i - 1, j + 1)]
-            for y, x in type_LT_sub_V:
-                if 0 <= y < height:
-                    result = max(result, type_LT_common_V + num_data[y][x])
 
 print(result)
