@@ -26,8 +26,9 @@ while Queue:
         if (next_ := current + i) <= 100 and board_cnt[next_] > move_cnt + 1:
             if special := board_map[next_]:
                 board_cnt[next_] = move_cnt + 1 # next 방문처리 & 사다리 or 뱀으로 이동
-                board_cnt[special] = move_cnt + 1
-                Queue.append(special)
+                if board_cnt[special] > move_cnt + 1: # 여기서 방문 확인해줘야 함..
+                    board_cnt[special] = move_cnt + 1
+                    Queue.append(special)
             else:
                 board_cnt[next_] = move_cnt + 1
                 Queue.append(next_)
