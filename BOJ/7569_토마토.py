@@ -11,16 +11,37 @@ def BFS(g):
         days += 1
         for _ in range(len(Queue)):
             z, y, x = Queue.popleft()
-            for next_z, next_y, next_x in [(z, y, x + 1), (z, y, x - 1),
+            # 기존코드가 더 보기 쉬운 반면, 검사가 필요하지 않은 z, y, x에도 범위 검사를 시행하므로 연산량이 많아 느림.
+            # if문으로 필요한 범위만 검사하면 좌표수는 6개로 동일하나, 검사가 1/3으로 줄어듦 (z & y & x -> z | y | x)
+            # -1(빈 공간) 검사 없이 0만 검사해도 결과에 영향을 끼치지 않으므로 제외.
+            if z > 0 and not tomato[z - 1][y][x]:
+                tomato[z - 1][y][x] = 1
+                Queue.append((z - 1, y, x))
+            if z + 1 < height and not tomato[z + 1][y][x]:
+                tomato[z + 1][y][x] = 1
+                Queue.append((z + 1, y, x))
+            if y > 0 and not tomato[z][y - 1][x]:
+                tomato[z][y - 1][x] = 1
+                Queue.append((z, y - 1, x))
+            if y + 1 < length and not tomato[z][y + 1][x]:
+                tomato[z][y + 1][x] = 1
+                Queue.append((z, y + 1, x))
+            if x > 0 and not tomato[z][y][x - 1]:
+                tomato[z][y][x - 1] = 1
+                Queue.append((z, y, x - 1))
+            if x + 1 < width and not tomato[z][y][x + 1]:
+                tomato[z][y][x + 1] = 1
+                Queue.append((z, y, x + 1))
+    # 기존 코드.
+    """         for next_z, next_y, next_x in [(z, y, x + 1), (z, y, x - 1),
                                            (z, y + 1, x), (z, y - 1, x),
                                            (z + 1, y, x), (z - 1, y, x)]:
                 if 0 <= next_z < height and 0 <= next_y < length and 0 <= next_x < width and \
                     tomato[next_z][next_y][next_x] != -1:
                     if tomato[next_z][next_y][next_x] == 0:
                         tomato[next_z][next_y][next_x] = 1
-                        Queue.append((next_z, next_y, next_x))
-    return days
-
+                        Queue.append((next_z, next_y, next_x)) """
+    
 input = stdin.readline
 
 width, length, height = map(int, input().split())
