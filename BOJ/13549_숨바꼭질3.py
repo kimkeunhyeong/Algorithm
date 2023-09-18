@@ -1,9 +1,9 @@
 from collections import deque
 
 def BFS(start, target):
-    Queue = deque([start * 2, start - 1, start + 1])
+    Queue = deque()
     Visited = [0] * 100001
-    Visited[start - 1] = Visited[start + 1] = 1
+    Queue.append(start)
 
     while Queue:
         check = Queue.popleft()
