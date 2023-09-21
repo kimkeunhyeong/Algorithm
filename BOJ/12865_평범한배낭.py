@@ -7,12 +7,12 @@ things = []
 for i in range(things_cnt):
     things.append(list(map(int, input().split())))
 
+things = sorted(filter(lambda x : x[0] <= max_weight, things), key = lambda x : (x[0], x[1]), reverse = True)
+
 DP = [0] * (max_weight + 1)
 
-for i in things:
-    if i[0] <= max_weight and DP[i[0]] < i[1]:
-        DP[i[0]] = i[1]
-        for j in range(i[0], max_weight + 1):
-            DP[j] = max(DP[j], DP[j - i[0]] + i[1])
-            
+for weight, value in things:
+    for i in range(max_weight, weight - 1, -1):
+        DP[i] = max(DP[i], DP[i - weight] + value)
+    
 print(DP[-1])
