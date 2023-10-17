@@ -21,9 +21,11 @@ for i in range(1, city_cnt + 1):
 # get route info
 for i in range(bus_cnt):
     start, end, cost = map(int, input().split())
-    route[start][end] = cost
+    # 변경하면서 min부분이 삭제됨...
+    route[start][end] = min(route[start][end], cost)
 
 floyd()
 
 for i in route[1:]:
-    print(*i[1:])
+    # i -> j 이동 불가인 경우 0 출력해줘야 함
+    print(str(i[1:]).replace("inf", "0").replace(",", "")[1:-1])
